@@ -1,0 +1,42 @@
+{{ define "main" }}
+<section class="hero">
+  {{ with site.Params.tagline }}<p class="hero-line">{{ . }}</p>{{ end }}
+  {{ with .Content }}<div class="hero-intro">{{ . }}</div>{{ end }}
+</section>
+
+{{ $writing := where site.RegularPages "Section" "writing" }}
+{{ with $writing }}
+<section class="block">
+  <h2 class="block-title">写作</h2>
+  <ul class="item-list">
+    {{ range first 5 .ByDate.Reverse }}
+    <li>
+      <div class="item-head">
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span class="meta">{{ .Date.Format "2006-01-02" }}</span>
+      </div>
+      {{ with .Params.summary }}<p class="excerpt">{{ . }}</p>{{ end }}
+    </li>
+    {{ end }}
+  </ul>
+</section>
+{{ end }}
+
+{{ $products := where site.RegularPages "Section" "products" }}
+{{ with $products }}
+<section class="block">
+  <h2 class="block-title">产品</h2>
+  <ul class="item-list">
+    {{ range . }}
+    <li>
+      <div class="item-head">
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{ with .Params.status }}<span class="meta">{{ . }}</span>{{ end }}
+      </div>
+      {{ with .Params.summary }}<p class="excerpt">{{ . }}</p>{{ end }}
+    </li>
+    {{ end }}
+  </ul>
+</section>
+{{ end }}
+{{ end }}

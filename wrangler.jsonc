@@ -1,0 +1,11 @@
+{
+  "name": "kunzhi",
+  "compatibility_date": "2026-09-24",
+  "build": {
+    "command": "./scripts/build.sh"
+  },
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}

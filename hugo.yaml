@@ -1,0 +1,34 @@
+baseURL: https://kunzhi.me/
+locale: zh-cn
+title: 困而知之
+enableRobotsTXT: true
+disableKinds:
+  - taxonomy
+  - term
+
+pagination:
+  pagerSize: 20
+
+menus:
+  main:
+    - name: 写作
+      pageRef: /writing
+      weight: 10
+    - name: 产品
+      pageRef: /products
+      weight: 20
+    - name: 关于
+      pageRef: /about
+      weight: 30
+
+params:
+  tagline: 或生而知之，或学而知之，或困而知之
+  description: 困而知之 —— 职业发展折腾记录与产品发布
+  author: tianheg
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: false
+  highlight:
+    noClasses: false

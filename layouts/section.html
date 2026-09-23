@@ -1,0 +1,25 @@
+{{ define "main" }}
+<div class="page-head">
+  <h1>{{ .Title }}</h1>
+</div>
+{{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+
+{{ $pages := .Pages }}
+{{ if eq .Section "writing" }}{{ $pages = .Pages.ByDate.Reverse }}{{ end }}
+
+{{ with $pages }}
+<ul class="item-list">
+  {{ range . }}
+  <li>
+    <div class="item-head">
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      <span class="meta">
+        {{- with .Params.status }}{{ . }}{{ else }}{{ .Date.Format "2006-01-02" }}{{ end -}}
+      </span>
+    </div>
+    {{ with .Params.summary }}<p class="excerpt">{{ . }}</p>{{ end }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}
+{{ end }}
