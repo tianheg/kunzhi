@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#2a2822"/>
+  <rect x="240" y="130" width="320" height="340" fill="#e8e6df" stroke="#4a4840" stroke-width="3"/>
+  <rect x="292" y="176" width="140" height="96" fill="#cfcdc6" stroke="#4a4840" stroke-width="2"/>
+  <g stroke="#4a4840" stroke-width="2" fill="none">
+    <path d="M292 320 L520 320 M292 356 L520 356"/>
+  </g>
+  <text x="292" y="404" font-family="monospace" font-size="26" fill="#4a4840">SENSOR-02</text>
+  <text x="292" y="436" font-family="monospace" font-size="20" fill="#6b685e">18650 / 11 mo</text>
+  <text x="240" y="520" font-family="monospace" font-size="22" fill="#5a574f">示例封面 · 替换成实拍</text>
+</svg>

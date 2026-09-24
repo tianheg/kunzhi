@@ -2,7 +2,7 @@
   <a class="site-title" href="{{ "/" | relURL }}">{{ site.Title }}</a>
   <nav class="site-nav">
     {{ range site.Menus.main -}}
-      <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      <a href="{{ .URL }}"{{ if or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) }} aria-current="page"{{ end }}>{{ .Name }}</a>
     {{ end -}}
   </nav>
 </header>

@@ -1,0 +1,51 @@
+{{ define "main" }}
+<div class="page-head">
+  <h1>{{ .Title }}</h1>
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+</div>
+
+{{ with .Pages }}
+<ul class="proj-grid">
+  {{ range . }}
+  {{- $src := "" -}}
+  {{- $srcset := "" -}}
+  {{- $w := 0 -}}
+  {{- $h := 0 -}}
+  {{- with .Params.cover -}}
+    {{- $src = . | relURL -}}
+  {{- else -}}
+    {{- with .Resources.GetMatch "cover.*" -}}
+      {{- if eq .MediaType.SubType "svg" -}}
+        {{- $src = .RelPermalink -}}
+      {{- else -}}
+        {{- $i1 := .Fill "720x540 Center webp q82" -}}
+        {{- $i2 := .Fill "1080x810 Center webp q82" -}}
+        {{- $src = $i1.RelPermalink -}}
+        {{- $srcset = printf "%s 720w, %s 1080w" $i1.RelPermalink $i2.RelPermalink -}}
+        {{- $w = 720 -}}
+        {{- $h = 540 -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  <li class="proj-card">
+    <a class="proj-thumb{{ if not $src }} is-empty{{ end }}" href="{{ .RelPermalink }}"
+       {{ if $src }}tabindex="-1"{{ end }}>
+      {{- if $src -}}
+        <img src="{{ $src }}"{{ with $srcset }} srcset="{{ . }}" sizes="(max-width: 52rem) 92vw, 46vw"{{ end }}
+          {{ if $w }}width="{{ $w }}" height="{{ $h }}"{{ end }}
+          alt="" loading="lazy" decoding="async">
+      {{- else -}}
+        <span>暂无图片</span>
+      {{- end -}}
+    </a>
+    <h2 class="proj-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    <p class="proj-meta">
+      {{- with .Params.status }}<span>{{ . }}</span>{{ end -}}
+      {{- if not .Date.IsZero }}<span>{{ .Date.Format "2006-01-02" }}</span>{{ end -}}
+    </p>
+    {{ with .Params.summary }}<p class="proj-note">{{ . }}</p>{{ end }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}
+{{ end }}

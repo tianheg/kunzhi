@@ -1,0 +1,8 @@
+<article class="entry">
+  {{ if not .Date.IsZero }}<p class="entry-when">{{ .Date.Format "01 / 02" }}</p>{{ end }}
+  <h2 class="entry-title">
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{ with .Section }}<span class="entry-tag">{{ . }}</span>{{ end }}
+  </h2>
+  {{ with .Params.summary }}<p class="entry-note">{{ . }}</p>{{ end }}
+</article>

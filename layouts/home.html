@@ -1,42 +1,34 @@
 {{ define "main" }}
-<section class="hero">
-  {{ with site.Params.tagline }}<p class="hero-line">{{ . }}</p>{{ end }}
-  {{ with .Content }}<div class="hero-intro">{{ . }}</div>{{ end }}
+<section class="lede">
+  {{ with site.Params.tagline }}<h1>{{ . }}</h1>{{ end }}
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
 </section>
 
-{{ $writing := where site.RegularPages "Section" "writing" }}
-{{ with $writing }}
-<section class="block">
-  <h2 class="block-title">写作</h2>
-  <ul class="item-list">
-    {{ range first 5 .ByDate.Reverse }}
-    <li>
-      <div class="item-head">
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <span class="meta">{{ .Date.Format "2006-01-02" }}</span>
-      </div>
-      {{ with .Params.summary }}<p class="excerpt">{{ . }}</p>{{ end }}
-    </li>
-    {{ end }}
-  </ul>
-</section>
+{{ $dated := slice }}
+{{ $undated := slice }}
+{{ range site.RegularPages.ByDate.Reverse }}
+  {{ if .Date.IsZero }}{{ $undated = $undated | append . }}{{ else }}{{ $dated = $dated | append . }}{{ end }}
 {{ end }}
 
-{{ $products := where site.RegularPages "Section" "products" }}
-{{ with $products }}
-<section class="block">
-  <h2 class="block-title">产品</h2>
-  <ul class="item-list">
-    {{ range . }}
-    <li>
-      <div class="item-head">
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-        {{ with .Params.status }}<span class="meta">{{ . }}</span>{{ end }}
-      </div>
-      {{ with .Params.summary }}<p class="excerpt">{{ . }}</p>{{ end }}
-    </li>
-    {{ end }}
-  </ul>
-</section>
+{{ if or $dated $undated }}
+<div class="axis">
+  {{ range $dated.GroupByDate "2006" }}
+  <section class="year">
+    <div class="year-label">{{ .Key }}</div>
+    <div class="entries">
+      {{ range .Pages }}{{ partial "entry.html" . }}{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ with $undated }}
+  <section class="year">
+    <div class="year-label" title="没有标注日期的条目">—</div>
+    <div class="entries">
+      {{ range . }}{{ partial "entry.html" . }}{{ end }}
+    </div>
+  </section>
+  {{ end }}
+</div>
 {{ end }}
 {{ end }}

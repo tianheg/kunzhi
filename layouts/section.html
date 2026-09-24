@@ -1,23 +1,26 @@
 {{ define "main" }}
 <div class="page-head">
   <h1>{{ .Title }}</h1>
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
 </div>
-{{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
 
 {{ $pages := .Pages }}
-{{ if eq .Section "writing" }}{{ $pages = .Pages.ByDate.Reverse }}{{ end }}
+{{ if eq .Section "articles" }}{{ $pages = .Pages.ByDate.Reverse }}{{ end }}
 
 {{ with $pages }}
-<ul class="item-list">
-  {{ range . }}
+<ul class="toc-list">
+  {{ $total := len . }}
+  {{ range $i, $p := . }}
   <li>
-    <div class="item-head">
-      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-      <span class="meta">
-        {{- with .Params.status }}{{ . }}{{ else }}{{ .Date.Format "2006-01-02" }}{{ end -}}
+    <a class="toc-row" href="{{ $p.RelPermalink }}">
+      <span class="toc-no">{{ printf "%02d" (sub $total $i) }}</span>
+      <span class="toc-title">{{ $p.Title }}</span>
+      <span class="toc-dots" aria-hidden="true"></span>
+      <span class="toc-meta">
+        {{- if $p.Date.IsZero }}{{ with $p.Params.status }}{{ . }}{{ end }}
+        {{- else }}{{ $p.Date.Format "2006-01-02" }}{{ end -}}
       </span>
-    </div>
-    {{ with .Params.summary }}<p class="excerpt">{{ . }}</p>{{ end }}
+    </a>
   </li>
   {{ end }}
 </ul>

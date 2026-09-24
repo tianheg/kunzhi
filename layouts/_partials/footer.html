@@ -1,3 +1,5 @@
+{{- $start := site.Params.startYear -}}
+{{- $now := now.Format "2006" -}}
 <footer class="site-foot">
-  <p>{{ site.Title }} · <a href="https://tianheg.co/">tianheg.co</a></p>
+  <span>© {{ if eq (printf "%v" $start) $now }}{{ $start }}{{ else }}{{ $start }}–{{ $now }}{{ end }} {{ site.Title }}</span>
 </footer>

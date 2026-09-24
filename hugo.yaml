@@ -11,17 +11,18 @@ pagination:
 
 menus:
   main:
-    - name: 写作
-      pageRef: /writing
+    - name: 文章
+      pageRef: /articles
       weight: 10
-    - name: 产品
-      pageRef: /products
+    - name: 项目
+      pageRef: /projects
       weight: 20
     - name: 关于
       pageRef: /about
       weight: 30
 
 params:
+  startYear: 2026
   tagline: 或生而知之，或学而知之，或困而知之
   description: 困而知之 —— 职业发展折腾记录与产品发布
   author: tianheg

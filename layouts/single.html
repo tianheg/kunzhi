@@ -1,12 +1,15 @@
 {{ define "main" }}
 <article>
-  <div class="page-head">
+  <header class="note-head">
     <h1>{{ .Title }}</h1>
-    <p class="meta">
-      {{- with .Params.status }}{{ . }}{{ with $.Date }} · {{ end }}{{ end -}}
-      {{- with .Date }}{{ .Format "2006-01-02" }}{{ end -}}
+    <p class="note-meta">
+      {{- if not .Date.IsZero }}<span>{{ .Date.Format "2006-01-02" }}</span>{{ end -}}
+      {{- with .Params.status }}<span>{{ . }}</span>{{ end -}}
+      {{- with .Section }}<span>{{ . }}</span>{{ end -}}
     </p>
+  </header>
+  <div class="prose">
+    {{ .Content }}
   </div>
-  <div class="prose">{{ .Content }}</div>
 </article>
 {{ end }}
