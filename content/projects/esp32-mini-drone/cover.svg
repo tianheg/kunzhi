@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="超小 ESP32 无人机：手绘四轴俯视线稿封面">
+  <style>
+    :root {
+      --paper: #f4f1e7;
+      --ink:   #26241e;
+      --rule:  #cdc7b0;
+      --mute:  #6f6b5c;
+      --red:   #a8342a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #17150f;
+        --ink:   #e9e4d6;
+        --rule:  #3a352c;
+        --mute:  #9a9384;
+        --red:   #d9705f;
+      }
+    }
+    .bg    { fill: var(--paper); }
+    .arm   { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; }
+    .board { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+    .motor { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+    .hub   { fill: var(--ink); }
+    .disc  { fill: none; stroke: var(--rule); stroke-width: 1.5; }
+    .blade { fill: none; stroke: var(--rule); stroke-width: 1.5; stroke-dasharray: 6 7; }
+    .spin  { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+    .head  { fill: var(--ink); }
+    .dim   { fill: none; stroke: var(--mute); stroke-width: 1.5; }
+    .lead  { fill: none; stroke: var(--red); stroke-width: 1.5; }
+    .mono  { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; fill: var(--mute); }
+    .hand  { font-family: "Kaiti SC", STKaiti, KaiTi, "KaiTi_GB2312", "Songti SC", serif; fill: var(--red); }
+  </style>
+
+  <rect class="bg" width="800" height="600"/>
+
+  <!-- 机臂：X 形四轴，对角等长 -->
+  <g class="arm">
+    <line x1="400" y1="300" x2="250" y2="150"/>
+    <line x1="400" y1="300" x2="550" y2="150"/>
+    <line x1="400" y1="300" x2="250" y2="450"/>
+    <line x1="400" y1="300" x2="550" y2="450"/>
+  </g>
+
+  <!-- 主控板：ESP32 30PIN 开发板 -->
+  <rect class="board" x="330" y="230" width="140" height="140"/>
+  <text class="mono" x="400" y="294" font-size="22" text-anchor="middle">ESP32</text>
+  <text class="mono" x="400" y="320" font-size="16" text-anchor="middle">30PIN</text>
+
+  <!-- 螺旋桨盘面（发丝线）＋ 桨叶扫掠（虚线） -->
+  <g>
+    <circle class="disc"  cx="250" cy="150" r="88"/>
+    <circle class="blade" cx="250" cy="150" r="62"/>
+    <circle class="disc"  cx="550" cy="150" r="88"/>
+    <circle class="blade" cx="550" cy="150" r="62"/>
+    <circle class="disc"  cx="250" cy="450" r="88"/>
+    <circle class="blade" cx="250" cy="450" r="62"/>
+    <circle class="disc"  cx="550" cy="450" r="88"/>
+    <circle class="blade" cx="550" cy="450" r="62"/>
+  </g>
+
+  <!-- 电机 + 转向（对角同向） -->
+  <g>
+    <circle class="motor" cx="250" cy="150" r="20"/><circle class="hub" cx="250" cy="150" r="6"/>
+    <circle class="motor" cx="550" cy="150" r="20"/><circle class="hub" cx="550" cy="150" r="6"/>
+    <circle class="motor" cx="250" cy="450" r="20"/><circle class="hub" cx="250" cy="450" r="6"/>
+    <circle class="motor" cx="550" cy="450" r="20"/><circle class="hub" cx="550" cy="450" r="6"/>
+  </g>
+  <g class="spin">
+    <path d="M220 150 A 30 30 0 0 1 280 150"/>
+    <path d="M520 150 A 30 30 0 0 0 580 150"/>
+    <path d="M520 450 A 30 30 0 0 1 580 450"/>
+    <path d="M220 450 A 30 30 0 0 0 280 450"/>
+  </g>
+  <g class="head">
+    <polygon points="280,150 272,141 288,141"/>
+    <polygon points="520,150 512,141 528,141"/>
+    <polygon points="580,450 572,441 588,441"/>
+    <polygon points="220,450 212,441 228,441"/>
+  </g>
+
+  <!-- 桨径标注 -->
+  <g class="dim">
+    <line x1="162" y1="46" x2="338" y2="46"/>
+    <line x1="162" y1="36" x2="162" y2="56"/>
+    <line x1="338" y1="36" x2="338" y2="56"/>
+  </g>
+  <text class="mono" x="250" y="30" font-size="17" text-anchor="middle">桨 65–75 mm</text>
+  <text class="mono" x="706" y="30" font-size="17" text-anchor="end">BOM ≈ ¥45（Mini）</text>
+
+  <!-- 电池：吊在支架上 -->
+  <rect class="board" x="340" y="486" width="120" height="40"/>
+  <text class="mono" x="400" y="512" font-size="16" text-anchor="middle">1S · 3.7–4.2 V</text>
+
+  <!-- 红笔批注 -->
+  <g class="lead">
+    <path d="M560 214 L594 232"/>
+    <path d="M236 232 L206 214"/>
+  </g>
+  <text class="hand" x="600" y="240" font-size="28">先摘桨叶再调试</text>
+  <text class="hand" x="200" y="212" font-size="28" text-anchor="end">手机当遥控器</text>
+  <text class="hand" x="400" y="574" font-size="26" text-anchor="middle">先飞起来，再谈最小</text>
+
+  <!-- 角落标记 -->
+  <text class="mono" x="96" y="566" font-size="18">SKETCH / REV 0.1</text>
+  <text class="mono" x="704" y="566" font-size="18" text-anchor="end">构思</text>
+</svg>
