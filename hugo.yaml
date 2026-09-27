@@ -17,6 +17,9 @@ menus:
     - name: 项目
       pageRef: /projects
       weight: 20
+    - name: 搜索
+      pageRef: /search
+      weight: 25
     - name: 关于
       pageRef: /about
       weight: 30

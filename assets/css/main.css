@@ -531,6 +531,54 @@ a.proj-thumb:hover { border-color: var(--red); }
   line-height: 30px;
 }
 
+/* ── 搜索（Pagefind Component UI）───────────────
+   组件是个 web component，内部样式不开放给外部选择器，只能喂 --pf-* 变量。
+   所以这里只给变量（配色全部映射到「手记」token），不试图改组件结构；
+   手记的无卡片/无阴影/无圆角三条同时体现在 --pf-border-radius: 0 与
+   --pf-shadow-*: none 上。 */
+.search-ui {
+  --pf-font: var(--sans);
+  --pf-text: var(--ink);
+  --pf-text-secondary: var(--mute);
+  --pf-text-muted: var(--mute);
+  --pf-background: var(--paper);
+  --pf-border: var(--rule);
+  --pf-border-focus: var(--red);
+  --pf-hover: color-mix(in oklab, var(--ink) 6%, transparent);
+  --pf-mark: var(--red);
+  --pf-skeleton: color-mix(in oklab, var(--ink) 8%, transparent);
+  --pf-skeleton-shine: color-mix(in oklab, var(--ink) 14%, transparent);
+  --pf-outline-focus: var(--red);
+  --pf-outline-width: 2px;
+  --pf-outline-offset: 2px;
+  --pf-scroll-shadow: transparent;
+  --pf-shadow-sm: none;
+  --pf-shadow-md: none;
+  --pf-shadow-lg: none;
+  --pf-border-radius: 0;
+
+  --pf-input-height: 2.6rem;
+  --pf-input-font-size: 16px;      /* 16px 以下 iOS 聚焦会自动放大 */
+  --pf-summary-font-size: 12px;
+  --pf-result-title-font-size: 17px;
+  --pf-result-excerpt-font-size: 15px;
+  --pf-results-gap: .4rem;
+
+  --pf-error-bg: transparent;
+  --pf-error-border: var(--red);
+  --pf-error-text: var(--red);
+  --pf-error-text-secondary: var(--red);
+
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+}
+.search-ui pagefind-input,
+.search-ui pagefind-summary,
+.search-ui pagefind-results { display: block; }
+.search-ui pagefind-summary { margin: .6rem 0 .2rem; font-family: var(--mono); }
+.search-ui pagefind-results { margin-top: .35rem; }
+
 /* ── 窄屏 ─────────────────────────────────────── */
 @media (max-width: 52rem) {
   body::before { opacity: .38; }
@@ -557,6 +605,7 @@ a.proj-thumb:hover { border-color: var(--red); }
   }
   body::before { display: none; }          /* 去掉横线纹理 */
   .skip-link, .site-nav { display: none; }
+  .search-ui { display: none; }            /* 搜索页印出来没有意义 */
   .wrap, .site-foot { max-width: none; padding: 0; }
   .site-head, .site-foot { border-color: #000; }
   .site-title { color: #000; transform: none; }

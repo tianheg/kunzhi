@@ -46,7 +46,8 @@ kunzhi/
 │   ├── _index.md            # 首页
 │   ├── about.md             # 关于
 │   ├── articles/            # 技术文章（职业发展、技能学习、方向思考）
-│   └── projects/            # 项目条目（Page Bundle + 封面图）
+│   ├── projects/            # 项目条目（Page Bundle + 封面图）
+│   └── search.md            # 站内搜索页（type: search）
 ├── layouts/
 │   ├── baseof.html          # 基础框架（含 skip-link 与 <main id="main">）
 │   ├── home.html            # 首页：年份分组时间轴
@@ -55,8 +56,9 @@ kunzhi/
 │   ├── 404.html
 │   ├── _markup/             # 渲染钩子（render-link.html：外链自动新标签页）
 │   ├── _partials/           # head / header / footer / entry
-│   └── projects/list.html   # 项目页专用：双栏带图
-├── scripts/build.sh         # CF Workers Builds 构建脚本（自装 Hugo + 校验）
+│   ├── projects/list.html   # 项目页专用：双栏带图
+│   └── search/single.html   # 搜索页：Pagefind Component UI
+├── scripts/build.sh         # CF Workers Builds 构建脚本（自装 Hugo + Pagefind，均含 sha256 校验）
 ├── static/                  # 直出 public/（favicon、og.png、apple-touch-icon、_headers）
 ├── docs/superpowers/        # 设计档与实施计划
 ├── hugo.yaml
@@ -67,8 +69,9 @@ kunzhi/
 
 - **Hugo 0.166.0**，**标准版**（非 Extended）。标准版实测可输出 webp/avif；Extended 主要多 LibSass，而 LibSass 已在 0.153 废弃、官方推 Dart Sass（任何版本可用），所以不需要。
 - **纯 CSS**，只有 `assets/css/main.css` 一个文件，走 Hugo 内置管道（`resources.Get | minify | fingerprint` + SRI）。
-- **零 npm / 零 webpack / 零 Node 依赖**。构建只调 `hugo` 二进制。
-- **零 JS**：全站没有一个 `<script>`，暗色模式用 `light-dark()` 跟随系统。
+- **搜索**：Pagefind 1.5.2 **extended 版** —— 构建后对 `public/` 建静态索引，产物在 `public/pagefind/`，无运行时服务。用 extended 是因为标准版只按空白切词，**中文不分词**（同一份内容索引词数实测 596 → 825）。
+- **零 npm / 零 webpack / 零 Node 依赖**。构建只调 `hugo` 与 `pagefind` 两个自装二进制（Pagefind 的 npm 包只是下载器，这里直接用官方 release 二进制）。
+- **脚本只在 `/search/`**：Pagefind Component UI 需要一点 JS 和 WebAssembly；其余页面零脚本，暗色模式仍用 `light-dark()` 跟随系统。
 - **零 webfont**：全部系统字体栈。
 - 部署为 **Cloudflare Workers Static Assets**（不是 Pages），构建由 Workers Builds 触发。
 
@@ -117,6 +120,14 @@ summary: 一句话摘要，显示在列表卡片上
 - 用 `cover: /images/xxx.jpg` 可指定任意路径（此时不经过管线，原图直出）
 - **没有封面图**时显示「暂无图片」斜纹占位块，不会破版
 - `content/projects/_index.md` 里的 `cascade: build.publishResources: false` 确保**封面原图不被打包发布**——只有压好的 webp 进部署包
+
+### search.md — 搜索页
+
+根目录的 `content/search.md` 用 `type: search` 指向 `layouts/search/single.html`，页面上只放 Pagefind Component UI 的三个 web component（`pagefind-input` / `pagefind-summary` / `pagefind-results`），不需要任何初始化脚本——它们靠共享实例自动连接。
+
+**索引范围由 `data-pagefind-body` 决定**：这个属性只挂在 `layouts/single.html` 的 `<article>` 上，所以索引里只有详情页（文章 / 项目 / 关于）；列表页、首页、搜索页不进索引。
+
+**索引不是内容，是构建产物**：`hugo server` 不产 `public/pagefind/`，本地预览搜索页会取不到 `/pagefind/*`。本地要搜就先跑一次构建 + 建索引（见「常用命令」）。
 
 ### 列表排序
 
@@ -187,7 +198,12 @@ hugo server \
 构建（与 CI 一致）：
 
 ```bash
+# CI 用的完整脚本：自装 Hugo + Pagefind，构建完顺手建搜索索引
+./scripts/build.sh
+
+# 手动两步（本地反复改内容时更快）
 hugo --gc --minify
+pagefind_extended --site public
 ```
 
 ## 部署
@@ -211,8 +227,8 @@ hugo --gc --minify
 
 这一节是给 AI 协作者（和未来的自己）的硬约束：
 
-1. **不要引入 npm / Tailwind / 任何需要 Node 的构建步骤。** 样式只有 `assets/css/main.css` 一个文件，走 Hugo 内置管道。
-2. **不要引入 JS。** 全站零脚本是设计目标；暗色模式靠 `light-dark()`，不要加切换按钮。
+1. **不要引入 npm / Tailwind / 任何需要 Node 的构建步骤。** 样式只有 `assets/css/main.css` 一个文件，走 Hugo 内置管道；Pagefind 也走官方 release 二进制（`scripts/build.sh` 自装 `pagefind_extended` + sha256 校验），不要改成 `npm install pagefind`。
+2. **脚本只允许出现在 `/search/`。** 那一页需要 Pagefind Component UI；其他任何页面都不要加 `<script>`，暗色模式继续靠 `light-dark()`。
 3. **不要引入 webfont。** 只用系统字体栈，改字体请改 `--sans` / `--serif` / `--hand` / `--mono` 变量。
 4. **不要改部署链路。** 隐私相关：不要往仓库里写 `FORGEJO_TOKEN` / `GH_TOKEN`；任何 token 用占位符代替。
 5. **图片一律走 Hugo 图片管线**，不要把大图直接塞进 `static/` 原图直出。
@@ -223,6 +239,9 @@ hugo --gc --minify
 
 ## 已知陷阱
 
+- **CSP 必须放行两样东西，否则搜索会静默失效**（2026-09-27 实测）：① `script-src` 里的 `'wasm-unsafe-eval'` —— Pagefind 用 WebAssembly，缺了会报 `CompileError: WebAssembly.instantiate() ... violates ... Content Security Policy`；② `img-src 'self' data:` —— 组件把图标写成 data: URI 的 SVG，缺了会在控制台出现 `img-src :: data` 违规。两条都只在**真实入口 + `_headers` 生效**的条件下才暴露，`hugo server` 不读 `_headers`，用它永远测不出来。
+- **搜索索引是构建产物**：`public/pagefind/` 由 `pagefind_extended --site public` 生成（CI 在 `scripts/build.sh` 里跑），本地预览搜索页前要先手动建一次。**别把命令换成标准版 `pagefind`** —— 它不会给中文分词，索引词数会从 825 掉到 596（构建日志里会出现 `Indexing Chinese in non-extended mode` 警告）。核对新鲜度看 `public/pagefind/pagefind-entry.json` 的 `page_count`（当前 = 3 个详情页）。
+- **改索引范围只动 `data-pagefind-body`**：它现在挂在 `layouts/single.html` 的 `<article>` 上；`layouts/search/single.html` 上是 `data-pagefind-ignore`。加/减后必看 `page_count` 有没有跟着变。
 - **外链判定在 `layouts/_markup/render-link.html`**：绝对 URL 且 scheme 为 `http`/`https` 且主机名不是本站（含 `www.`）才加 `target="_blank"`。`mailto:` / `tel:` / 锚点 / 相对路径都不处理。自定义链接渲染钩子会**整体接管** Markdown 链接渲染，改它时记得保留 `.Title` 与 `.Text`，否则会丢标题与链接文字。它只作用于 `.Content`（正文），**不作用于模板里手写的 `<a>`**——模板里的外链要自己加属性。
 - **`hugo server` 默认写磁盘并从磁盘 serve**，`public/` 里的旧构建残留在内容改名后仍会被服务（旧 URL 返回 200 而不是 404）。改名后请删掉 `public/` 再重启。
 - **`_build` 这个 front matter 键在 Hugo 0.145 已被移除**（不是废弃），写了会让构建直接 ERROR。现在是 `build`。

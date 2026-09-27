@@ -1,0 +1,19 @@
+{{ define "main" }}
+{{- /* 搜索页：Pagefind Component UI 是 web components，靠共享实例互相通信，
+       三个元素写在同一个容器里即可，不需要任何初始化脚本。
+       data-pagefind-ignore：搜索页本身不该进索引。 */ -}}
+<article data-pagefind-ignore>
+  <header class="note-head">
+    <h1>{{ .Title }}</h1>
+  </header>
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+
+  <link rel="stylesheet" href="{{ "pagefind/pagefind-component-ui.css" | relURL }}">
+  <div class="search-ui">
+    <pagefind-input placeholder="输入关键词…"></pagefind-input>
+    <pagefind-summary default-message="输入关键词开始搜索"></pagefind-summary>
+    <pagefind-results show-sub-results></pagefind-results>
+  </div>
+  <script src="{{ "pagefind/pagefind-component-ui.js" | relURL }}" type="module"></script>
+</article>
+{{ end }}

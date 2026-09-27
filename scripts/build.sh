@@ -4,6 +4,7 @@
 set -euo pipefail
 
 HUGO_VERSION=0.166.0
+PAGEFIND_VERSION=1.5.2
 BIN_DIR=/opt/buildhome
 
 export TZ=Asia/Shanghai
@@ -29,4 +30,25 @@ rm -f "hugo_${HUGO_VERSION}_linux-amd64.tar.gz" "hugo_${HUGO_VERSION}_checksums.
 
 echo "Hugo: $(hugo version)"
 
+# Pagefind：构建后生成站内搜索索引（纯静态产物，无运行时服务）。
+# 用 extended 版（52MB）：标准版对**中文不分词**（它只按空白切词），索引词数实测 596 vs extended 825；
+# 官方警告原文：Indexing Chinese in non-extended mode ... will not segment words that are not whitespace separated。
+# 同样固定版本 + sha256 校验；已在 PATH 里且版本一致时跳过下载（本地反复构建省事）。
+# 注意 Pagefind 的 npm 包只是个下载器 —— 这里直接用官方 release 二进制，站点保持零 npm。
+if command -v pagefind_extended >/dev/null 2>&1 && [ "$(pagefind_extended --version 2>/dev/null | awk '{print $2}')" = "$PAGEFIND_VERSION" ]; then
+  echo "Pagefind (extended) v${PAGEFIND_VERSION} already installed, skipping download."
+else
+  echo "Installing Pagefind extended v${PAGEFIND_VERSION}..."
+  PF_ASSET="pagefind_extended-v${PAGEFIND_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+  PF_BASE="https://github.com/Pagefind/pagefind/releases/download/v${PAGEFIND_VERSION}"
+  curl --fail -LJO "${PF_BASE}/${PF_ASSET}"
+  curl --fail -LJO "${PF_BASE}/${PF_ASSET}.sha256"
+  sha256sum -c "${PF_ASSET}.sha256"
+  tar -xzf "$PF_ASSET" -C "$BIN_DIR" pagefind_extended
+  rm -f "$PF_ASSET" "${PF_ASSET}.sha256"
+fi
+
+echo "Pagefind: $(pagefind_extended --version)"
+
 hugo --gc --minify
+pagefind_extended --site public
