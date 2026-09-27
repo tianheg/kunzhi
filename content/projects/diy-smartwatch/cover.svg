@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="自制智能手表：手绘草图风格封面">
+  <style>
+    :root {
+      --paper:  #f4f1e7;
+      --ink:    #26241e;
+      --rule:   #cdc7b0;
+      --mute:   #6f6b5c;
+      --red:    #a8342a;
+      --screen: #e9e5d8;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper:  #17150f;
+        --ink:    #e9e4d6;
+        --rule:   #3a352c;
+        --mute:   #9a9384;
+        --red:    #d9705f;
+        --screen: #1e1b13;
+      }
+    }
+    .bg     { fill: var(--paper); }
+    .case   { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+    .bezel  { fill: none; stroke: var(--rule); stroke-width: 1.5; }
+    .screen { fill: var(--screen); }
+    .strap  { fill: none; stroke: var(--ink); stroke-width: 2; }
+    .hair   { fill: none; stroke: var(--rule); stroke-width: 1.5; }
+    .trace  { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+    .leader { fill: none; stroke: var(--red); stroke-width: 1.5; }
+    .mono   { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; fill: var(--mute); }
+    .hand   { font-family: "Kaiti SC", STKaiti, KaiTi, "KaiTi_GB2312", "Songti SC", serif; fill: var(--red); }
+    .dim    { fill: none; stroke: var(--mute); stroke-width: 1.5; }
+  </style>
+
+  <rect class="bg" width="800" height="600"/>
+
+  <!-- 表带（先画，表壳压在它上面） -->
+  <rect class="strap" x="356" y="110" width="88" height="120"/>
+  <rect class="strap" x="356" y="390" width="88" height="120"/>
+
+  <!-- 表壳 -->
+  <circle class="case" cx="400" cy="300" r="130"/>
+  <circle class="bezel" cx="400" cy="300" r="116"/>
+  <circle class="screen" cx="400" cy="300" r="104"/>
+
+  <!-- 表盘：一条 PPG 波形 -->
+  <path class="trace" d="M320 310 L338 310 L346 288 L354 331 L362 310 L386 310 L394 291 L402 327 L410 310 L436 310 L444 289 L452 329 L460 310 L480 310"/>
+  <text class="mono" x="400" y="368" font-size="20" text-anchor="middle">PPG · 72 bpm</text>
+
+  <!-- 半径标注 -->
+  <g class="dim">
+    <line x1="270" y1="96" x2="530" y2="96"/>
+    <line x1="270" y1="86" x2="270" y2="106"/>
+    <line x1="530" y1="86" x2="530" y2="106"/>
+  </g>
+  <text class="mono" x="400" y="78" font-size="18" text-anchor="middle">44 mm</text>
+
+  <!-- 红笔批注 -->
+  <g class="leader">
+    <path d="M588 246 L524 268"/>
+    <path d="M232 292 L270 291"/>
+  </g>
+  <text class="hand" x="592" y="242" font-size="28">自己画板</text>
+  <text class="hand" x="228" y="292" font-size="28" text-anchor="end">数据入口归自己</text>
+  <text class="hand" x="400" y="552" font-size="26" text-anchor="middle">先点亮，再谈续航</text>
+
+  <!-- 角落标记 -->
+  <text class="mono" x="96" y="552" font-size="20">SKETCH / REV 0.1</text>
+  <text class="mono" x="704" y="552" font-size="20" text-anchor="end">构思</text>
+</svg>
