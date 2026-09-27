@@ -240,6 +240,7 @@ pagefind_extended --site public
 ## 已知陷阱
 
 - **CSP 必须放行两样东西，否则搜索会静默失效**（2026-09-27 实测）：① `script-src` 里的 `'wasm-unsafe-eval'` —— Pagefind 用 WebAssembly，缺了会报 `CompileError: WebAssembly.instantiate() ... violates ... Content Security Policy`；② `img-src 'self' data:` —— 组件把图标写成 data: URI 的 SVG，缺了会在控制台出现 `img-src :: data` 违规。两条都只在**真实入口 + `_headers` 生效**的条件下才暴露，`hugo server` 不读 `_headers`，用它永远测不出来。
+- **改 Pagefind 组件内部要当心样式优先级**：Component UI 是 light DOM（`.pf-input` / `.pf-result` / `.pf-input-clear` … 都能选中），但它自带的样式表也设字号，同级选择器「谁后加载谁赢」。改清除按钮文案时就踩过：不加 `!important` 会渲染成英文 + 中文并排的「Clear清空」。这类选择器补丁依赖 Pagefind 内部类名，升级版本后要复查。
 - **搜索索引是构建产物**：`public/pagefind/` 由 `pagefind_extended --site public` 生成（CI 在 `scripts/build.sh` 里跑），本地预览搜索页前要先手动建一次。**别把命令换成标准版 `pagefind`** —— 它不会给中文分词，索引词数会从 825 掉到 596（构建日志里会出现 `Indexing Chinese in non-extended mode` 警告）。核对新鲜度看 `public/pagefind/pagefind-entry.json` 的 `page_count`（当前 = 3 个详情页）。
 - **改索引范围只动 `data-pagefind-body`**：它现在挂在 `layouts/single.html` 的 `<article>` 上；`layouts/search/single.html` 上是 `data-pagefind-ignore`。加/减后必看 `page_count` 有没有跟着变。
 - **外链判定在 `layouts/_markup/render-link.html`**：绝对 URL 且 scheme 为 `http`/`https` 且主机名不是本站（含 `www.`）才加 `target="_blank"`。`mailto:` / `tel:` / 锚点 / 相对路径都不处理。自定义链接渲染钩子会**整体接管** Markdown 链接渲染，改它时记得保留 `.Title` 与 `.Text`，否则会丢标题与链接文字。它只作用于 `.Content`（正文），**不作用于模板里手写的 `<a>`**——模板里的外链要自己加属性。

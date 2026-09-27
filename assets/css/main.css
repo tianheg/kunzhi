@@ -532,10 +532,9 @@ a.proj-thumb:hover { border-color: var(--red); }
 }
 
 /* ── 搜索（Pagefind Component UI）───────────────
-   组件是个 web component，内部样式不开放给外部选择器，只能喂 --pf-* 变量。
-   所以这里只给变量（配色全部映射到「手记」token），不试图改组件结构；
-   手记的无卡片/无阴影/无圆角三条同时体现在 --pf-border-radius: 0 与
-   --pf-shadow-*: none 上。 */
+   组件是 light DOM（不是 shadow DOM），类名可以直接选中（.pf-input / .pf-result …），
+   但默认只喂 --pf-* 变量，需要改的才下选择器（目前只有一处：清除按钮写死英文）。
+   手记的无卡片/无阴影/无圆角三条体现在 --pf-border-radius: 0 与 --pf-shadow-*: none 上。 */
 .search-ui {
   --pf-font: var(--sans);
   --pf-text: var(--ink);
@@ -578,6 +577,20 @@ a.proj-thumb:hover { border-color: var(--red); }
 .search-ui pagefind-results { display: block; }
 .search-ui pagefind-summary { margin: .6rem 0 .2rem; font-family: var(--mono); }
 .search-ui pagefind-results { margin-top: .35rem; }
+
+/* 组件里唯一必须动选择器的地方：清除按钮写死英文 "Clear"。
+   按钮在 light DOM 里，用 CSS 换字 —— 字号归零藏掉英文，::after 补红笔「清空」。
+   font-size 必须 !important：Pagefind 自己的样式表也设了这个按钮的字号，
+   同级选择器谁后加载谁赢，不加重就是「Clear清空」两截并排（实测过）。
+   ⚠ 依赖 Pagefind 的 .pf-input-clear 类名，升级版本后要复查这一条。 */
+.search-ui pagefind-input .pf-input-clear { font-size: 0 !important; }
+.search-ui .pf-input-clear::after {
+  content: "清空";
+  font-size: .72rem;
+  font-family: var(--mono);
+  letter-spacing: .06em;
+  color: var(--red);
+}
 
 /* ── 窄屏 ─────────────────────────────────────── */
 @media (max-width: 52rem) {
