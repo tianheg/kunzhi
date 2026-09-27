@@ -1,6 +1,8 @@
 ---
 title: 搜索
 type: search
+build:
+  list: never          # 工具页，不进首页时间轴（内容才进）
 description: 站内搜索——关键词索引在构建时生成，随站点一起部署。
 ---
 
