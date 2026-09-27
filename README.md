@@ -53,6 +53,7 @@ kunzhi/
 │   ├── section.html         # 列表页：目录式（点线 + 编号）
 │   ├── single.html          # 详情页：单栏 + 右侧页边注
 │   ├── 404.html
+│   ├── _markup/             # 渲染钩子（render-link.html：外链自动新标签页）
 │   ├── _partials/           # head / header / footer / entry
 │   └── projects/list.html   # 项目页专用：双栏带图
 ├── scripts/build.sh         # CF Workers Builds 构建脚本（自装 Hugo + 校验）
@@ -132,6 +133,7 @@ summary: 一句话摘要，显示在列表卡片上
 | `section.html` | 列表页：目录式排版（编号 + 点线引导 + 右对齐元信息） |
 | `single.html` | 详情页：38rem 单栏正文 + `blockquote` 浮右侧做红字页边注 |
 | `projects/list.html` | 覆盖 `section.html`，只作用于 `/projects/`：双栏带图网格 |
+| `_markup/render-link.html` | Markdown 链接渲染钩子：**外链自动 `target="_blank" rel="noopener noreferrer"`** |
 | `_partials/entry.html` | 单个条目的渲染（首页与列表页共用） |
 
 `aria-current` 由 `IsMenuCurrent or HasMenuCurrent` 判断，**文章/项目详情页也会高亮对应菜单项**。
@@ -221,6 +223,7 @@ hugo --gc --minify
 
 ## 已知陷阱
 
+- **外链判定在 `layouts/_markup/render-link.html`**：绝对 URL 且 scheme 为 `http`/`https` 且主机名不是本站（含 `www.`）才加 `target="_blank"`。`mailto:` / `tel:` / 锚点 / 相对路径都不处理。自定义链接渲染钩子会**整体接管** Markdown 链接渲染，改它时记得保留 `.Title` 与 `.Text`，否则会丢标题与链接文字。它只作用于 `.Content`（正文），**不作用于模板里手写的 `<a>`**——模板里的外链要自己加属性。
 - **`hugo server` 默认写磁盘并从磁盘 serve**，`public/` 里的旧构建残留在内容改名后仍会被服务（旧 URL 返回 200 而不是 404）。改名后请删掉 `public/` 再重启。
 - **`_build` 这个 front matter 键在 Hugo 0.145 已被移除**（不是废弃），写了会让构建直接 ERROR。现在是 `build`。
 - **`.hugo_build.lock`** 是 Hugo 的构建互斥锁，0 字节，可以随时删（下次构建自动重建），已在 `.gitignore` 里。

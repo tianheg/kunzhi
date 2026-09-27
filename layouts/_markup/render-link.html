@@ -1,0 +1,17 @@
+{{- /* 外链在浏览器新标签页打开；站内链接保持同页跳转。
+       「外链」判定：绝对 URL 且 scheme 是 http/https 且主机名不是本站（含 www）。
+       mailto: / tel: / 锚点 / 相对路径一律不处理，避免把mailto 也弹到新标签页。 */ -}}
+{{- $dest := .Destination -}}
+{{- $u := urls.Parse $dest -}}
+{{- $siteHost := (urls.Parse site.BaseURL).Hostname -}}
+{{- $external := and
+      (in (slice "http" "https") $u.Scheme)
+      (ne $u.Hostname $siteHost)
+      (ne $u.Hostname (printf "www.%s" $siteHost)) -}}
+<a href="{{ $dest | safeURL }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+  {{- if $external }} target="_blank" rel="noopener noreferrer"{{ end -}}
+>
+  {{- with .Text }}{{ . }}{{ end -}}
+</a>
+{{- /* chomp trailing newline */ -}}
