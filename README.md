@@ -96,7 +96,7 @@ description: 可选，用于 SEO 与分享卡
 
 ### projects/ — 项目条目
 
-推荐做成 **Page Bundle**，封面图放同目录：
+**一律做成 Page Bundle 并自带封面图**（每个新项目条目都必须有 `cover.svg`），封面放同目录：
 
 ```
 content/projects/my-project/
@@ -118,7 +118,8 @@ summary: 一句话摘要，显示在列表卡片上
 - bundle 内的 `cover.*` 自动经 Hugo 图片管线压成 **webp**，产出 **720w / 1080w 两档 srcset**，并输出 `width`/`height`
 - **SVG 原样使用**（矢量不需要压缩）
 - 用 `cover: /images/xxx.jpg` 可指定任意路径（此时不经过管线，原图直出）
-- **没有封面图**时显示「暂无图片」斜纹占位块，不会破版
+- **封面一律用 `cover.svg`**（矢量、不占体积、原样直出不走图片管线）。约定：`viewBox 0 0 800 600`，内联 `<style>` 里定义「手记」色板的 `:root` 变量 ＋ `@media (prefers-color-scheme: dark)` 覆盖，与站点同源；线稿 + 红笔批注（楷体）；无圆角、无阴影、无渐变。参照已有条目的 `cover.svg`
+- **没有封面图**时显示「暂无图片」斜纹占位块，不会破版 —— 这是缺图兜底，不是常态：新条目一律配图
 - `content/projects/_index.md` 里的 `cascade: build.publishResources: false` 确保**封面原图不被打包发布**——只有压好的 webp 进部署包
 
 ### search.md — 搜索页
