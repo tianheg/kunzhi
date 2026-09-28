@@ -3,7 +3,7 @@
 # 不在 CF 环境运行时也安全（只影响 PATH 内的 hugo）。
 set -euo pipefail
 
-HUGO_VERSION=0.166.0
+HUGO_VERSION=0.167.0
 PAGEFIND_VERSION=1.5.2
 BIN_DIR=/opt/buildhome
 
