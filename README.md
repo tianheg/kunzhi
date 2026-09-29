@@ -42,12 +42,14 @@
 ```
 kunzhi/
 ├── assets/css/main.css      # 全站唯一样式表（方案三「手记」风格）
+├── assets/js/draw.js        # 站点唯一的脚本：项目页「抽一条」（零依赖，约 20 行）
 ├── content/
 │   ├── _index.md            # 首页
 │   ├── about.md             # 关于
 │   ├── articles/            # 技术文章（职业发展、技能学习、方向思考）
 │   ├── projects/            # 项目条目（Page Bundle + 封面图）
 │   └── search.md            # 站内搜索页（type: search）
+├── data/ideas.yaml          # 项目页抽签池（title / note / hint）
 ├── layouts/
 │   ├── baseof.html          # 基础框架（含 skip-link 与 <main id="main">）
 │   ├── home.html            # 首页：年份分组时间轴
@@ -56,7 +58,7 @@ kunzhi/
 │   ├── 404.html
 │   ├── _markup/             # 渲染钩子（render-link.html：外链自动新标签页）
 │   ├── _partials/           # head / header / footer / entry
-│   ├── projects/list.html   # 项目页专用：双栏带图
+│   ├── projects/list.html   # 项目页专用：双栏带图 + 「抽一条」
 │   └── search/single.html   # 搜索页：Pagefind Component UI
 ├── scripts/build.sh         # CF Workers Builds 构建脚本（自装 Hugo + Pagefind，均含 sha256 校验）
 ├── static/                  # 直出 public/（favicon、og.png、apple-touch-icon、_headers）
@@ -71,7 +73,7 @@ kunzhi/
 - **纯 CSS**，只有 `assets/css/main.css` 一个文件，走 Hugo 内置管道（`resources.Get | minify | fingerprint` + SRI）。
 - **搜索**：Pagefind 1.5.2 **extended 版** —— 构建后对 `public/` 建静态索引，产物在 `public/pagefind/`，无运行时服务。用 extended 是因为标准版只按空白切词，**中文不分词**（同一份内容索引词数实测 596 → 825）。
 - **零 npm / 零 webpack / 零 Node 依赖**。构建只调 `hugo` 与 `pagefind` 两个自装二进制（Pagefind 的 npm 包只是下载器，这里直接用官方 release 二进制）。
-- **脚本只在 `/search/`**：Pagefind Component UI 需要一点 JS 和 WebAssembly；其余页面零脚本，暗色模式仍用 `light-dark()` 跟随系统。
+- **脚本只在 `/search/` 与 `/projects/`**：前者要 Pagefind Component UI（JS + WebAssembly），后者是「抽一条」的抽签逻辑（`assets/js/draw.js`，同源外链、走 Hugo 管道带 SRI，不内联）。**其余页面零脚本**，暗色模式仍用 `light-dark()` 跟随系统。
 - **零 webfont**：全部系统字体栈。
 - 部署为 **Cloudflare Workers Static Assets**（不是 Pages），构建由 Workers Builds 触发。
 
@@ -122,6 +124,21 @@ summary: 一句话摘要，显示在列表卡片上
 - **没有封面图**时显示「暂无图片」斜纹占位块，不会破版 —— 这是缺图兜底，不是常态：新条目一律配图
 - `content/projects/_index.md` 里的 `cascade: build.publishResources: false` 确保**封面原图不被打包发布**——只有压好的 webp 进部署包
 
+### data/ideas.yaml — 项目页抽签池
+
+`/projects/` 页面最下面那个「抽一条」的池子，放**还没写进项目清单**的构思。Hugo 读 `data/` 目录，不需要任何构建依赖。
+
+```yaml
+- title: NAS 电费账本           # 必填，一条 idea 的名字
+  note: 把插座功率计的读数接进来，按天记 NAS 到底吃掉多少电。  # 必填，一句话说清这是个什么东西
+  hint: 一个智能插座 + 几十行脚本，零新增硬件                  # 可选，成本 / 门槛 / 前提（等宽小字）
+```
+
+- 键名一律小写（Hugo 读 data 文件按小写取键）
+- 少于两条就不渲染这个区块；文件不存在也不报错（`{{ with hugo.Data.ideas }}` 直接跳过）
+- 某条 idea 写成项目条目后，**把它从池子里删掉**——池子只装没兑现的
+- 所有条目都会渲染进 HTML，显示哪条由 `assets/js/draw.js` 决定（第一条默认可见，按钮脚本加载后才出现，所以**无 JS 时页面是「静态显示第一条、没有按钮」**，不会出现点了没反应的按钮）
+
 ### search.md — 搜索页
 
 根目录的 `content/search.md` 用 `type: search` 指向 `layouts/search/single.html`，页面上只放 Pagefind Component UI 的三个 web component（`pagefind-input` / `pagefind-summary` / `pagefind-results`），不需要任何初始化脚本——它们靠共享实例自动连接。
@@ -144,7 +161,7 @@ summary: 一句话摘要，显示在列表卡片上
 | `home.html` | 首页：按年份分组的时间轴 |
 | `section.html` | 列表页：目录式排版（编号 + 点线引导 + 右对齐元信息） |
 | `single.html` | 详情页：38rem 单栏正文 + `blockquote` 浮右侧做红字页边注 |
-| `projects/list.html` | 覆盖 `section.html`，只作用于 `/projects/`：双栏带图网格 |
+| `projects/list.html` | 覆盖 `section.html`，只作用于 `/projects/`：双栏带图网格 + 「抽一条」抽签区块 |
 | `_markup/render-link.html` | Markdown 链接渲染钩子：**外链自动 `target="_blank" rel="noopener noreferrer"`** |
 | `_partials/entry.html` | 单个条目的渲染（首页与列表页共用） |
 
@@ -229,7 +246,7 @@ pagefind_extended --site public
 这一节是给 AI 协作者（和未来的自己）的硬约束：
 
 1. **不要引入 npm / Tailwind / 任何需要 Node 的构建步骤。** 样式只有 `assets/css/main.css` 一个文件，走 Hugo 内置管道；Pagefind 也走官方 release 二进制（`scripts/build.sh` 自装 `pagefind_extended` + sha256 校验），不要改成 `npm install pagefind`。
-2. **脚本只允许出现在 `/search/`。** 那一页需要 Pagefind Component UI；其他任何页面都不要加 `<script>`，暗色模式继续靠 `light-dark()`。
+2. **脚本只允许出现在 `/search/` 与 `/projects/`。** 前者需要 Pagefind Component UI；后者是项目页的「抽一条」（`assets/js/draw.js`，同源外链、走 Hugo 管道带 SRI、不内联）。其他任何页面都不要加 `<script>`，暗色模式继续靠 `light-dark()`。
 3. **不要引入 webfont。** 只用系统字体栈，改字体请改 `--sans` / `--serif` / `--hand` / `--mono` 变量。
 4. **不要改部署链路。** 隐私相关：不要往仓库里写 `FORGEJO_TOKEN` / `GH_TOKEN`；任何 token 用占位符代替。
 5. **图片一律走 Hugo 图片管线**，不要把大图直接塞进 `static/` 原图直出。
@@ -242,13 +259,16 @@ pagefind_extended --site public
 
 - **CSP 必须放行两样东西，否则搜索会静默失效**（2026-09-27 实测）：① `script-src` 里的 `'wasm-unsafe-eval'` —— Pagefind 用 WebAssembly，缺了会报 `CompileError: WebAssembly.instantiate() ... violates ... Content Security Policy`；② `img-src 'self' data:` —— 组件把图标写成 data: URI 的 SVG，缺了会在控制台出现 `img-src :: data` 违规。两条都只在**真实入口 + `_headers` 生效**的条件下才暴露，`hugo server` 不读 `_headers`，用它永远测不出来。
 - **改 Pagefind 组件内部要当心样式优先级**：Component UI 是 light DOM（`.pf-input` / `.pf-result` / `.pf-input-clear` … 都能选中），但它自带的样式表也设字号，同级选择器「谁后加载谁赢」。改清除按钮文案时就踩过：不加 `!important` 会渲染成英文 + 中文并排的「Clear清空」。这类选择器补丁依赖 Pagefind 内部类名，升级版本后要复查。
-- **搜索索引是构建产物**：`public/pagefind/` 由 `pagefind_extended --site public` 生成（CI 在 `scripts/build.sh` 里跑），本地预览搜索页前要先手动建一次。**别把命令换成标准版 `pagefind`** —— 它不会给中文分词，索引词数会从 825 掉到 596（构建日志里会出现 `Indexing Chinese in non-extended mode` 警告）。核对新鲜度看 `public/pagefind/pagefind-entry.json` 的 `page_count`（当前 = 3 个详情页）。
+- **搜索索引是构建产物**：`public/pagefind/` 由 `pagefind_extended --site public` 生成（CI 在 `scripts/build.sh` 里跑），本地预览搜索页前要先手动建一次。**别把命令换成标准版 `pagefind`** —— 它不会给中文分词，索引词数会从 825 掉到 596（构建日志里会出现 `Indexing Chinese in non-extended mode` 警告）。核对新鲜度看 `public/pagefind/pagefind-entry.json` 的 `page_count`（在 `languages["zh-cn"]` 下；当前 = 4：1 篇文章 + 2 个项目 + 关于）。
 - **改索引范围只动 `data-pagefind-body`**：它现在挂在 `layouts/single.html` 的 `<article>` 上；`layouts/search/single.html` 上是 `data-pagefind-ignore`。加/减后必看 `page_count` 有没有跟着变。
 - **外链判定在 `layouts/_markup/render-link.html`**：绝对 URL 且 scheme 为 `http`/`https` 且主机名不是本站（含 `www.`）才加 `target="_blank"`。`mailto:` / `tel:` / 锚点 / 相对路径都不处理。自定义链接渲染钩子会**整体接管** Markdown 链接渲染，改它时记得保留 `.Title` 与 `.Text`，否则会丢标题与链接文字。它只作用于 `.Content`（正文），**不作用于模板里手写的 `<a>`**——模板里的外链要自己加属性。
 - **`hugo server` 默认写磁盘并从磁盘 serve**，`public/` 里的旧构建残留在内容改名后仍会被服务（旧 URL 返回 200 而不是 404）。改名后请删掉 `public/` 再重启。
 - **`_build` 这个 front matter 键在 Hugo 0.145 已被移除**（不是废弃），写了会让构建直接 ERROR。现在是 `build`。
 - **`.hugo_build.lock`** 是 Hugo 的构建互斥锁，0 字节，可以随时删（下次构建自动重建），已在 `.gitignore` 里。
 - **Hugo release tar.gz 里含 LICENSE 与 README.md**，解压时务必指定目录或只抽取 `hugo` 这一项，否则会覆盖仓库自己的 README（`scripts/build.sh` 已按此处理）。
+- **`.Site.Data` 在 Hugo 0.156 已废弃**，用 `hugo.Data`（用旧的会出 `WARN deprecated`，功能照旧）。
+- **`[hidden]` 会被 display 规则盖掉**：抽签那块的条目靠 `hidden` 属性切换显隐，所以 `.draw-item` **不能**设 `display`（哪怕 `display: block`），否则被藏起来的条目照样显示。CSS 里另写了 `.draw-item[hidden] { display: none; }` 兜底。
+- **伪元素的挂载点影响位置**：红笔 ✎ 挂在 `.draw-item-title` 上而不是 `.draw-item` 上——`li` 的 `::after` 会落到最后一个块级子元素之后，单独占一行。
 - **不要给带 `aria-current` 的 partial 用 `partialCached`**，不带 key 会跨页共享输出导致高亮串页。
 - **`imaging.quality` 在 0.163 起废弃**，要按格式分别设 `imaging.{jpeg,webp,avif}.quality`；`resampleFilter` 默认是 `box` 不是 Lanczos。
 - **`keepWhitespace` 不是合法 minify 键**（0.166 / 0.167 实测），写了会被静默忽略。

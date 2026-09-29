@@ -531,6 +531,80 @@ a.proj-thumb:hover { border-color: var(--red); }
   line-height: 30px;
 }
 
+/* ── 项目页：抽一条（池子在 data/ideas.yaml）─────
+   条目全部渲染在 DOM 里，只有抽中的那条不带 hidden。
+   注意 .draw-item 不要设 display —— 否则会盖掉 [hidden] 的 display:none。 */
+.draw {
+  margin: 3rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  break-inside: avoid;
+}
+.draw-head {
+  margin: 0;
+  font-family: var(--hand);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--pen);
+}
+.draw-head span {
+  margin-left: .7rem;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .14em;
+  color: var(--mute);
+}
+/* 固定一块高度，抽到长短不一的条目时按钮不会上下跳 */
+.draw-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  min-height: 6.5rem;
+}
+.draw-item { margin: 0; }
+.draw-item[hidden] { display: none; }
+/* 抽中的那条，标题行末盖一个红笔 ✎。
+   挂在 .draw-item-title 上而不是 .draw-item 上 —— li 的 ::after 会掉到条目下方单独成行 */
+.draw-item-title::after {
+  content: "✎";
+  margin-left: .4rem;
+  font-family: var(--hand);
+  color: var(--red);
+}
+.draw-item-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--ink);
+}
+.draw-item-note {
+  margin: .4rem 0 0;
+  max-width: 42rem;
+  color: var(--graphite);
+  line-height: 30px;
+}
+.draw-item-hint {
+  margin: .35rem 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mute);
+}
+.draw-act { margin: 1.25rem 0 0; }
+.draw-btn {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .12em;
+  color: var(--pen);
+  background: transparent;
+  border: 1px solid var(--pen);
+  padding: .45rem .9rem;
+  cursor: pointer;
+}
+.draw-btn:hover { color: var(--red); border-color: var(--red); }
+
 /* ── 搜索（Pagefind Component UI）───────────────
    组件是 light DOM（不是 shadow DOM），类名可以直接选中（.pf-input / .pf-result …），
    但默认只喂 --pf-* 变量，需要改的才下选择器（目前只有一处：清除按钮写死英文）。
