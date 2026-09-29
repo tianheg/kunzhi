@@ -4,6 +4,31 @@
   {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
 </div>
 
+{{- /* 抽一条：池子在 data/ideas.yaml，条目全部渲染进 DOM，显示哪条由 assets/js/draw.js 决定。
+       少于两条就不渲染（抽不起来）。按钮默认 hidden，脚本加载后才露出来 —— 无 JS 时页面
+       只显示第一条，不会出现点了没反应的按钮。放在项目网格之前，它才算这页的"入口"。 */ -}}
+{{ with hugo.Data.ideas }}
+{{ if gt (len .) 1 }}
+<section class="draw" aria-labelledby="draw-head">
+  <h2 class="draw-head" id="draw-head">抽一条<span>还没写进下面清单的</span></h2>
+  <ul class="draw-list" id="draw-list">
+    {{ range $i, $it := . }}
+    <li class="draw-item"{{ if $i }} hidden{{ end }}>
+      <p class="draw-item-title">{{ $it.title }}</p>
+      {{ with $it.note }}<p class="draw-item-note">{{ . }}</p>{{ end }}
+      {{ with $it.hint }}<p class="draw-item-hint">{{ . }}</p>{{ end }}
+    </li>
+    {{ end }}
+  </ul>
+  <p class="draw-act"><button type="button" class="draw-btn" id="draw-btn" hidden>再抽一条</button></p>
+</section>
+{{ with resources.Get "js/draw.js" }}
+  {{ $js := . | minify | fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{ end }}
+{{ end }}
+{{ end }}
+
 {{ with .Pages }}
 <ul class="proj-grid">
   {{ range . }}
@@ -47,30 +72,5 @@
   </li>
   {{ end }}
 </ul>
-{{ end }}
-
-{{- /* 抽一条：池子在 data/ideas.yaml，条目全部渲染进 DOM，显示哪条由 assets/js/draw.js 决定。
-       少于两条就不渲染（抽不起来）。按钮默认 hidden，脚本加载后才露出来 —— 无 JS 时页面
-       只显示第一条，不会出现点了没反应的按钮。 */ -}}
-{{ with hugo.Data.ideas }}
-{{ if gt (len .) 1 }}
-<section class="draw" aria-labelledby="draw-head">
-  <h2 class="draw-head" id="draw-head">抽一条<span>还没写进上面清单的</span></h2>
-  <ul class="draw-list" id="draw-list">
-    {{ range $i, $it := . }}
-    <li class="draw-item"{{ if $i }} hidden{{ end }}>
-      <p class="draw-item-title">{{ $it.title }}</p>
-      {{ with $it.note }}<p class="draw-item-note">{{ . }}</p>{{ end }}
-      {{ with $it.hint }}<p class="draw-item-hint">{{ . }}</p>{{ end }}
-    </li>
-    {{ end }}
-  </ul>
-  <p class="draw-act"><button type="button" class="draw-btn" id="draw-btn" hidden>再抽一条</button></p>
-</section>
-{{ with resources.Get "js/draw.js" }}
-  {{ $js := . | minify | fingerprint }}
-  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
-{{ end }}
-{{ end }}
 {{ end }}
 {{ end }}

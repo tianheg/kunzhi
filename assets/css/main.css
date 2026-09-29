@@ -535,9 +535,9 @@ a.proj-thumb:hover { border-color: var(--red); }
    条目全部渲染在 DOM 里，只有抽中的那条不带 hidden。
    注意 .draw-item 不要设 display —— 否则会盖掉 [hidden] 的 display:none。 */
 .draw {
-  margin: 3rem 0 0;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--rule);
+  margin: 1.5rem 0 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--rule);
   break-inside: avoid;
 }
 .draw-head {

@@ -126,7 +126,7 @@ summary: 一句话摘要，显示在列表卡片上
 
 ### data/ideas.yaml — 项目页抽签池
 
-`/projects/` 页面最下面那个「抽一条」的池子，放**还没写进项目清单**的构思。Hugo 读 `data/` 目录，不需要任何构建依赖。
+`/projects/` 页面**项目网格上方**那个「抽一条」的池子（放在网格之前，它才是这页的入口），放还没写进项目清单的构思。Hugo 读 `data/` 目录，不需要任何构建依赖。
 
 ```yaml
 - title: NAS 电费账本           # 必填，一条 idea 的名字
@@ -161,7 +161,7 @@ summary: 一句话摘要，显示在列表卡片上
 | `home.html` | 首页：按年份分组的时间轴 |
 | `section.html` | 列表页：目录式排版（编号 + 点线引导 + 右对齐元信息） |
 | `single.html` | 详情页：38rem 单栏正文 + `blockquote` 浮右侧做红字页边注 |
-| `projects/list.html` | 覆盖 `section.html`，只作用于 `/projects/`：双栏带图网格 + 「抽一条」抽签区块 |
+| `projects/list.html` | 覆盖 `section.html`，只作用于 `/projects/`：「抽一条」抽签区块（网格上方）+ 双栏带图网格 |
 | `_markup/render-link.html` | Markdown 链接渲染钩子：**外链自动 `target="_blank" rel="noopener noreferrer"`** |
 | `_partials/entry.html` | 单个条目的渲染（首页与列表页共用） |
 
