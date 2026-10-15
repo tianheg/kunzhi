@@ -69,7 +69,7 @@ kunzhi/
 
 ## 技术栈
 
-- **Hugo 0.167.0**，**标准版**（非 Extended）。标准版实测可输出 webp/avif；Extended 主要多 LibSass，而 LibSass 已在 0.153 废弃、官方推 Dart Sass（任何版本可用），所以不需要。
+- **Hugo 0.168.0**，**标准版**（非 Extended）。标准版实测可输出 webp/avif；Extended 主要多 LibSass，而 LibSass 已在 0.153 废弃、官方推 Dart Sass（任何版本可用），所以不需要。
 - **纯 CSS**，只有 `assets/css/main.css` 一个文件，走 Hugo 内置管道（`resources.Get | minify | fingerprint` + SRI）。
 - **搜索**：Pagefind 1.5.2 **extended 版** —— 构建后对 `public/` 建静态索引，产物在 `public/pagefind/`，无运行时服务。用 extended 是因为标准版只按空白切词，**中文不分词**（同一份内容索引词数实测 596 → 825）。
 - **零 npm / 零 webpack / 零 Node 依赖**。构建只调 `hugo` 与 `pagefind` 两个自装二进制（Pagefind 的 npm 包只是下载器，这里直接用官方 release 二进制）。
@@ -79,7 +79,7 @@ kunzhi/
 
 ## 环境要求
 
-- Hugo 0.167+（CI 由 `scripts/build.sh` 自装，版本固定并做 sha256 校验）
+- Hugo 0.168+（CI 由 `scripts/build.sh` 自装，版本固定并做 sha256 校验）
 - 不需要 Node、npm、pnpm
 
 ## 内容规范
