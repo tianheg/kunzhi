@@ -199,7 +199,7 @@ summary: 一句话摘要，显示在列表卡片上
 ```bash
 hugo server \
   --bind 0.0.0.0 \
-  --baseURL http://192.168.8.10:1313/ \
+  --baseURL http://<内网IP>:1313/ \
   --appendPort=false \
   --disableFastRender
 ```

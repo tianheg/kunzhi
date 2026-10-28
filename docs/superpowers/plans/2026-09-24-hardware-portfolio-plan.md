@@ -1,7 +1,7 @@
 # 硬件技术作品集设计计划
 
 - 日期：2026-09-24
-- 基线：Hugo **0.166.0**（本机 `/root/.local/bin/hugo`，实测 `hugo.IsExtended == false`）
+- 基线：Hugo **0.166.0**（本机 `~/.local/bin/hugo`，实测 `hugo.IsExtended == false`）
 - 官方文档基线：`~/projects/hugoDocs`（最后提交 2026-09-09，与 0.166 同期）
 - 目标站点：**kunzhi.me**（假设是把它现有的 `products/` 区升级为真正的硬件项目作品集；若要独立成站，第 4 节之后照搬，只换域名/仓库/Worker 名）
 
